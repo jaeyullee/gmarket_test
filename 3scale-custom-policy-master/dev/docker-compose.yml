@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  openresty:
+    build: .
+    ports:
+      - '3000:3000'
+    expose:
+      - '3000'
+    volumes:
+      - ./conf.d:/etc/nginx/conf.d
+      - ../policies/example/0.1:/etc/nginx/conf.d/scripts
+      - ../policies/example/0.1/custom:/usr/local/openresty/luajit/share/lua/5.1/custom
+      - ./t:/t

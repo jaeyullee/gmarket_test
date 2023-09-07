@@ -1,0 +1,91 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: "apicast-example-policy"
+message: "APIcast Example Policy"
+objects:
+
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+    labels:
+      app: apicast
+    name: apicast-policy
+
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+    labels:
+      app: apicast
+    name: apicast-example-policy
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: apicast-policy:example
+    source:
+      git:
+        uri: http://github.ebaykorea.com/CloudPlatform/3scale-custom-policy.git
+        ref: 'master'
+      type: Git
+    strategy:
+      type: Source
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: 'amp-apicast:${AMP_RELEASE}'
+
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+    labels:
+      app: apicast
+    name: apicast-custom-policies
+  spec:
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: 'amp-apicast:latest'
+    postCommit:
+      args:
+        - '--test'
+        - '--lazy'
+      command:
+        - bin/apicast
+    resources: {}
+    runPolicy: Serial
+    source:
+      images:
+        - from:
+            kind: ImageStreamTag
+            name: 'apicast-policy:example'
+          paths:
+            # copy policy source code into the new image
+            - destinationDir: policies
+              sourcePath: /opt/app-root/policies/example
+      type: Dockerfile
+      dockerfile: |
+        FROM scratch
+        COPY ./policies/example/0.1/custom /usr/local/share/lua/5.1/custom
+        COPY . src
+    strategy:
+      dockerStrategy:
+        env:
+        - name: LUA_PATH
+          value: /usr/local/openresty/site/lualib/?.ljbc;/usr/local/openresty/site/lualib/?/init.ljbc;/usr/local/openresty/lualib/?.ljbc;/usr/local/openresty/lualib/?/init.ljbc;/usr/local/openresty/site/lualib/?.lua;/usr/local/openresty/site/lualib/?/init.lua;/usr/local/openresty/lualib/?.lua;/usr/local/openresty/lualib/?/init.lua;./?.lua;/usr/local/share/luajit-2.1.0-beta3/?.lua;/usr/local/share/lua/5.1/?.lua;/usr/local/share/lua/5.1/?/init.lua;/usr/local/share/lua/5.1/*/?.lua;/usr/lib64/lua/5.1/?.lua;
+        from:
+          kind: ImageStreamTag
+          name: 'amp-apicast:${AMP_RELEASE}'
+      type: Docker
+    triggers:
+      - type: ConfigChange
+      - type: ImageChange
+
+parameters:
+- name: AMP_RELEASE
+  required: true
+  description: AMP Version (e.g. 2.11)

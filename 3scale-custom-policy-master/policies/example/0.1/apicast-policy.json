@@ -1,0 +1,141 @@
+{
+  "$schema": "http://apicast.io/policy-v1/schema#manifest#",
+  "name": "APIcast Custom Policy",
+  "summary": "Custom policy for JWT based authentication.",
+  "description": "Custom policy for JWT based authentication.",
+  "version": "0.1",
+  "configuration": {
+    "type": "object",
+    "definitions": {
+      "conf": {
+        "type": "object",
+        "required": ["key_claim_name", "maximum_expiration", "secret_is_base64", "run_on_preflight"],
+        "properties": {
+          "uri_param_names": {
+            "type": "array",
+            "description": "uri param names for retrieving token",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cookie_names": {
+            "type": "array",
+            "description": "cookie names for retrieving token",
+            "items": {
+              "type": "string"
+            }
+          },
+          "header_names": {
+            "type": "array",
+            "description": "header names for retrieving token",
+            "items": {
+              "type": "string"
+            }
+          },
+          "key_claim_name": {
+            "type": "string",
+            "description": "key claim name",
+            "default": "iss"
+          },
+          "maximum_expiration": {
+            "type": "number",
+            "description": "exp",
+            "default": 3600
+          },
+          "secret_is_base64": {
+            "type": "boolean",
+            "description": "jwt secret base64 encoded",
+            "default": true
+          },
+          "run_on_preflight": {
+            "type": "boolean",
+            "description": "preflight (HTTP OPTIONS request)",
+            "default": false
+          },
+          "claims_to_verify": {
+            "type": "array",
+            "description": "claims to verify",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "jwt_secret": {
+        "type": "array",
+        "description": "JWT Options",
+        "items": {
+          "type": "object",
+          "required": ["key", "algorithm"],
+          "properties": {
+            "consumer": {
+              "type": "object",
+              "required": ["id", "username"],
+              "description": "Consumer",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Consumer UUID"
+                },
+                "custom_id": {
+                  "type": "string",
+                  "description": "Consumer Custom Id"
+                },
+                "username": {
+                  "type": "string",
+                  "description": "username"
+                }
+              }
+            },
+            "key": {
+              "type": "string",
+              "description": "claim identity"
+            },
+            "rsa_public_key": {
+              "type": "string",
+              "description": "rsa public key"
+            },
+            "secret": {
+              "type": "string",
+              "description": "secret"
+            },
+            "algorithm": {
+              "type": "string",
+              "description": "algorithm",
+              "oneOf": [
+                {
+                  "enum": ["HS256"],
+                  "title": "HS256"
+                },
+                {
+                  "enum": ["HS384"],
+                  "title": "HS384"
+                },
+                {
+                  "enum": ["HS512"],
+                  "title": "HS512"
+                },
+                {
+                  "enum": ["RS256"],
+                  "title": "RS256"
+                },
+                {
+                  "enum": ["RS512"],
+                  "title": "RS512"
+                },
+                {
+                  "enum": ["ES256"],
+                  "title": "ES256"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "properties": {
+      "conf": { "$ref": "#/definitions/conf" },
+      "jwt_secret": { "$ref": "#/definitions/jwt_secret" }
+    }
+  }
+}
