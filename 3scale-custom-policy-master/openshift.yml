@@ -27,7 +27,7 @@ objects:
         name: apicast-policy:example
     source:
       git:
-        uri: http://github.ebaykorea.com/CloudPlatform/3scale-custom-policy.git
+        uri: https://github.com/jaeyullee/gmarket_test.git
         ref: 'master'
       type: Git
     strategy:
