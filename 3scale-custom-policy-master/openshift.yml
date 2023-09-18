@@ -28,7 +28,7 @@ objects:
     source:
       git:
         uri: https://github.com/jaeyullee/gmarket_test.git
-        ref: 'master'
+        ref: 'main'
       type: Git
     strategy:
       type: Source
