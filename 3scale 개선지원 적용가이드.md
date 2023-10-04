@@ -3,7 +3,8 @@
 ### 목차
 1. [Redis AOF 기능 비활성화](#1-Redis-AOF-기능-비활성화)
 2. [Openshift Prometheus를 활용한 3scale API 요청 데이터 조회](#2-Openshift-Prometheus를-활용한-3scale-API-요청-데이터-조회)
-  
+
+---
   
 ### 1. Redis AOF 기능 비활성화
 * redis-conf ConfigMap 수정 및 변경사항 적용
@@ -26,8 +27,9 @@ $ INFO persistence
 
 > 3scale 2.11 와 2.12 버전 Operator 기준으로, Operator에 의한 ConfigMap에 대한 Reconcile이 동작하지 않음을 확인했습니다.  
 > 다만 기술적으로는 추후 Reconcile 되도록 변경하는 것은 가능하므로 패치 시 확인이 필요합니다.
-
-
+  
+---
+  
 ### 2. Openshift Prometheus를 활용한 3scale API 요청 데이터 조회
 * user workload에 대한 모니터링 허용
 ```
