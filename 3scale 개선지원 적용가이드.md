@@ -1,8 +1,8 @@
 # Gmarket 3scale 개선지원 적용가이드
   
 ## 목차
-- 1. [Redis AOF 기능 비활성화](##1.-Redis-AOF-기능-비활성화)
-- 2. [Openshift Prometheus를 활용한 3scale API 요청 데이터 조회](##2.-Openshift-Prometheus를-활용한-3scale-API-요청-데이터-조회)
+- 1. [Redis AOF 기능 비활성화](#1-Redis-AOF-기능-비활성화)
+- 2. [Openshift Prometheus를 활용한 3scale API 요청 데이터 조회](#2-Openshift-Prometheus를-활용한-3scale-API-요청-데이터-조회)
   
   
 ## 1. Redis AOF 기능 비활성화
