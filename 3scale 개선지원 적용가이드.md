@@ -22,7 +22,7 @@ $ redis-cli -h 127.0.0.1 -p 6379
 $ INFO persistence
 ```
 
-> 3scale 2.11 와 2.12 버전 Operator 기준으로, Operator에 의한 ConfigMap에 대한 Reconcile이 동작하지 않음을 확인했습니다.
+> 3scale 2.11 와 2.12 버전 Operator 기준으로, Operator에 의한 ConfigMap에 대한 Reconcile이 동작하지 않음을 확인했습니다.  
 > 다만 기술적으로는 추후 Reconcile 되도록 변경하는 것은 가능하므로 패치 시 확인이 필요합니다.
 
 
