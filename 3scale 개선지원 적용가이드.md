@@ -1,8 +1,8 @@
 # Gmarket 3scale 개선지원 적용가이드
-
+  
 <목차>
-
-
+  
+  
 ## 1. Redis AOF 기능 비활성화
 * redis-conf ConfigMap 수정 및 변경사항 적용
 ```
