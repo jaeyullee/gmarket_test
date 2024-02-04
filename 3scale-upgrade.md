@@ -50,7 +50,9 @@ https://github.com/fullstorydev/grpcurl/releases/download/v1.8.0/grpcurl_1.8.0_l
 
 > 외부에서 오퍼레이터 이미지 데이터 및 카탈로그를 반입하는 경우 manifests-redhat-operator-index-v4-10/* 의 파일들의 수정이 필요합니다.
 
+<br/>
 
+* 이후 작업은 방문하여 직접 진행하겠습니다.
 
 
 
