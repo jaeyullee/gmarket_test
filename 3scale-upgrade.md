@@ -12,7 +12,7 @@ https://github.com/fullstorydev/grpcurl/releases/download/v1.8.0/grpcurl_1.8.0_l
 <br/>
 
 * Operator 프루닝(OCP 4.10 까지는 sqlite 기반 방식으로 수행)
-  참조 : https://docs.openshift.com/container-platform/4.10/operators/admin/olm-restricted-networks.html#olm-pruning-index-image_olm-restricted-networks
+참조 : https://docs.openshift.com/container-platform/4.10/operators/admin/olm-restricted-networks.html#olm-pruning-index-image_olm-restricted-networks
 ```
 # tar -xvf openshift-client-linux-<ocp-버전>.tar.gz -C /usr/local/bin
 # tar -xvf opm-linux-<ocp-버전>.tar.gz -C /usr/local/bin
