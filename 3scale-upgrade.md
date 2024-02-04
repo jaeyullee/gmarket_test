@@ -1,7 +1,7 @@
 ### 3scale Operator 2.13버전 설치를 위한 인덱스 이미지 준비
 * cli 준비 (openshift-client, opm, grpcurl)
-  https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/<ocp-버전>/openshift-client-linux-<ocp-버전>.tar.gz
-  https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/<ocp-버전>/opm-linux-<ocp-version>.tar.gz
+  https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/<ocp-버전>/openshift-client-linux-<ocp-버전>.tar.gz<br/>
+  https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/<ocp-버전>/opm-linux-<ocp-version>.tar.gz<br/>
   https://github.com/fullstorydev/grpcurl/releases/download/v1.8.0/grpcurl_1.8.0_linux_x86_64.tar.gz
   
 > 현재 배포 된 openshift version에 맞는 cli를 준비합니다.
@@ -33,6 +33,8 @@
   -t <미러-레지스트리>:<port>/<namespace>/redhat-operator-index-update:v4.10
 # podman push <미러-레지스트리>:<port>/<namespace>/redhat-operator-index-update:v4.10
 ```
+
+<br/>
 
 * Operator Catalog Mirror 생성
 ```
