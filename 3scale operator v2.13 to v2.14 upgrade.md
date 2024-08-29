@@ -4,7 +4,8 @@ Operator Mirror를 생성하는 과정에서 package명을 기존과 동일하�
 
 catalogsource 명이 image명을 참조하여 생성되기 때문에, image 명의 첫 철자는 소문자 영어로 합니다.
 
-3scale Operator의 APIManager에 apicast image를 지정 할 경우, ImageStream의 참조 이미지가 자동으로 변경됩니다. 이로 인해 BuildConfig의 trigger가 작동하여 Build가 수행됩니다. 이로 인한 ImageStream의 tag 참조값이 변경됨을 주의합니다.
+3scale Operator의 APIManager에 apicast image를 지정 할 경우, ImageStream의 참조 이미지가 자동으로 변경됩니다.
+이로 인해 BuildConfig의 trigger가 작동하여 Build가 수행됩니다. 이로 인한 ImageStream의 tag 참조값이 변경됨을 주의합니다.
 
 3scale Operator의 APIManager에 apicast image는 Digest 형태의 이름으로만 참조가 가능합니다.
 
@@ -160,7 +161,8 @@ done
 # sed "s/test-3scaleoperator/3scaleoperator/" catalogSource.yaml > catalogSource-final.yaml
 ```
 > 생성된 catalogSource.yaml의 image가 <namespace>-<image name>으로 되어있기 때문에  수정해야 합니다.  
-> catalogsource name이 image name를 참조하기 때문에, image name이 숫자로 시작한다면 catalogsource 생성이 불가능합니다. 필요 시 변경합니다.
+> catalogsource name이 image name를 참조하기 때문에, image name 첫글자가 숫자면 catalogsource 생성이 불가능합니다.
+> 필요 시 변경합니다.
 
 
 
