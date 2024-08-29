@@ -69,29 +69,29 @@ EOF
 >     "name": "3scale-operator",  
 >     "defaultChannel": "threescale-2.14",  
 > …  
-> 부분이 있다. 여기에서 올바른 operator 이름과 defaultChannel 정보를 가져온다. channel 은 버전에 따라 다른 채널을 사용할 수도 있다. 
-> 아래로 조금 더 스크롤해서 channel 정보로 내려온다. 
-> { 
->     "schema": "olm.channel", 
->     "name": "threescale-2.14", 
->     "package": "3scale-operator", 
->     "entries": [ 
->         { 
->             "name": "3scale-operator.v0.11.11", 
->             "skipRange": ">=0.10.0 <0.11.11" 
->         } 
->     ] 
-> } 
->  
-> … 
-> 필요한 버전의 패키지 이름 정보를 얻어서 entry 변수로 사용한다. skipRange 는 업그레이드시 필요하므로 마찬가지로 변수에 추가한다. 
-> 이제 entry 이름으로 검색하며 아래로 내려가면, 
-> { 
->     "schema": "olm.bundle", 
->     "name": "3scale-operator.v0.11.11", 
->     "package": "3scale-operator", 
->     "image": "registry.redhat.io/3scale-amp2/3scale-rhel7-operator-metadata@sha256:d8e94620237da97e1b65dac4fb616d21d13e2fea08c9385145a02ad3fbd59d88", 
-> ... 
+> 부분이 있다. 여기에서 올바른 operator 이름과 defaultChannel 정보를 가져온다. channel 은 버전에 따라 다른 채널을 사용할 수도 있다.  
+> 아래로 조금 더 스크롤해서 channel 정보로 내려온다.  
+> {  
+>     "schema": "olm.channel",  
+>     "name": "threescale-2.14",  
+>     "package": "3scale-operator",  
+>     "entries": [  
+>         {  
+>             "name": "3scale-operator.v0.11.11",  
+>             "skipRange": ">=0.10.0 <0.11.11"  
+>         }  
+>     ]  
+> }  
+>   
+> …  
+> 필요한 버전의 패키지 이름 정보를 얻어서 entry 변수로 사용한다. skipRange 는 업그레이드시 필요하므로 마찬가지로 변수에 추가한다.  
+> 이제 entry 이름으로 검색하며 아래로 내려가면,  
+> {  
+>     "schema": "olm.bundle",  
+>     "name": "3scale-operator.v0.11.11",  
+>     "package": "3scale-operator",  
+>     "image": "registry.redhat.io/3scale-amp2/3scale-rhel7-operator-metadata@sha256:d8e94620237da97e1b65dac4fb616d21d13e2fea08c9385145a02ad3fbd59d88",  
+> ...  
 > 부분이 나온다. 여기에서 bundle 이미지 정보를 가져온다.
 
 
