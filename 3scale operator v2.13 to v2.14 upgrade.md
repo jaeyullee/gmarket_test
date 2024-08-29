@@ -63,12 +63,12 @@ entries:
 EOF
 ```
 
-> catalog.json 파일을 열면 맨 윗 부분에, 
-> { 
->     "schema": "olm.package", 
->     "name": "3scale-operator", 
->     "defaultChannel": "threescale-2.14", 
-> … 
+> catalog.json 파일을 열면 맨 윗 부분에,  
+> {  
+>     "schema": "olm.package",  
+>     "name": "3scale-operator",  
+>     "defaultChannel": "threescale-2.14",  
+> …  
 > 부분이 있다. 여기에서 올바른 operator 이름과 defaultChannel 정보를 가져온다. channel 은 버전에 따라 다른 채널을 사용할 수도 있다. 
 > 아래로 조금 더 스크롤해서 channel 정보로 내려온다. 
 > { 
