@@ -22,9 +22,6 @@ opm cli 다운로드 (https://mirror.openshift.com/pub/openshift-v4/clients/ocp/
 
 oc adm catalog mirror 명령으로 catalog.json 파일 추출
 
-해당 방법은 mirror 대상 오퍼레이터 인덱스가 redhat-operator-index:v4.11 이상 버전인 경우에만 유효
-
-v4.10 버전에서 해당 방법을 사용하고 싶은 경우 Creating a file-based catalog image( https://docs.openshift.com/container-platform/4.10/operators/admin/olm-managing-custom-catalogs.html#olm-creating-fb-catalog-image_olm-managing-custom-catalogs ) 의 1,2 절차 수행 이후 생성된 index.yaml 파일을 직접 수정해야 함
 
 # oc adm catalog mirror \
    registry.redhat.io/redhat/redhat-operator-index:v4.12 \
