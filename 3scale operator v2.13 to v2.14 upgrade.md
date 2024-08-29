@@ -66,9 +66,9 @@ EOF
 
 > catalog.json 파일을 열면 맨 윗 부분에,  
 > {  
->    "schema": "olm.package",  
->    "name": "3scale-operator",  
->    "defaultChannel": "threescale-2.14",  
+>     "schema": "olm.package",  
+>     "name": "3scale-operator",  
+>     "defaultChannel": "threescale-2.14",  
 > …  
 > 부분이 있다. 여기에서 올바른 operator 이름과 defaultChannel 정보를 가져온다. channel 은 버전에 따라 다른 채널을 사용할 수도 있다.  
 > 아래로 조금 더 스크롤해서 channel 정보로 내려온다.  
@@ -159,7 +159,7 @@ done
 ```
 # sed "s/test-3scaleoperator/3scaleoperator/" catalogSource.yaml > catalogSource-final.yaml
 ```
-> 생성된 catalogSource.yaml의 image가 <namespace>-<image name>으로 되어있기 때문에  수정해야 합니다.
+> 생성된 catalogSource.yaml의 image가 <namespace>-<image name>으로 되어있기 때문에  수정해야 합니다.  
 > catalogsource name이 image name를 참조하기 때문에, image name이 숫자로 시작한다면 catalogsource 생성이 불가능합니다. 필요 시 변경합니다.
 
 
