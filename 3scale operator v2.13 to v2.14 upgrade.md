@@ -30,7 +30,8 @@ opm cli 다운로드 (https://mirror.openshift.com/pub/openshift-v4/clients/ocp/
    --index-filter-by-os="linux/amd64" \
    --manifests-only
 
-끝까지 기다리지 말고, wrote declarative configs to /tmp/xxxxxx 로그가 보이면 ctrl-C 눌러서 중단하고 /tmp/xxxxxx/3scale-operator/catalog.json 폴더 확인
+끝까지 기다리지 말고, wrote declarative configs to /tmp/xxxxxx 로그가 보이면 ctrl-C 눌러서 중단하고
+/tmp/xxxxxx/3scale-operator/catalog.json 폴더 확인
 ```
 
 2. 미러 생성 스크립트 작성
@@ -65,9 +66,9 @@ EOF
 
 > catalog.json 파일을 열면 맨 윗 부분에,  
 > {  
->     "schema": "olm.package",  
->     "name": "3scale-operator",  
->     "defaultChannel": "threescale-2.14",  
+>    "schema": "olm.package",  
+>    "name": "3scale-operator",  
+>    "defaultChannel": "threescale-2.14",  
 > …  
 > 부분이 있다. 여기에서 올바른 operator 이름과 defaultChannel 정보를 가져온다. channel 은 버전에 따라 다른 채널을 사용할 수도 있다.  
 > 아래로 조금 더 스크롤해서 channel 정보로 내려온다.  
