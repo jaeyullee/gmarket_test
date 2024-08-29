@@ -20,9 +20,8 @@ opm cli 다운로드 (https://mirror.openshift.com/pub/openshift-v4/clients/ocp/
 
 
 
-oc adm catalog mirror 명령으로 catalog.json 파일 추출
-
-
+1. oc adm catalog mirror 명령으로 catalog.json 파일 추출
+```
 # oc adm catalog mirror \
    registry.redhat.io/redhat/redhat-operator-index:v4.12 \
    registry.test.cluster/olm \
@@ -32,11 +31,10 @@ oc adm catalog mirror 명령으로 catalog.json 파일 추출
    --manifests-only
 
 끝까지 기다리지 말고, wrote declarative configs to /tmp/xxxxxx 로그가 보이면 ctrl-C 눌러서 중단하고 /tmp/xxxxxx/3scale-operator/catalog.json 폴더 확인
+```
 
-
-
-미러 생성 스크립트 작성
-
+2. 미러 생성 스크립트 작성
+```
 # vi threescale-2.14-operator-mirror.sh
 
 #!/bin/bash
@@ -63,83 +61,80 @@ entries:
 - name: ${ENTRY}
   skipRange: "${SKIPRANGE}"
 EOF
+```
 
-catalog.json 파일을 열면 맨 윗 부분에,
-
-{
-    "schema": "olm.package",
-    "name": "3scale-operator",
-    "defaultChannel": "threescale-2.14",
-…
-부분이 있다. 여기에서 올바른 operator 이름과 defaultChannel 정보를 가져온다. channel 은 버전에 따라 다른 채널을 사용할 수도 있다.
-
-아래로 조금 더 스크롤해서 channel 정보로 내려온다.
-
-{
-    "schema": "olm.channel",
-    "name": "threescale-2.14",
-    "package": "3scale-operator",
-    "entries": [
-        {
-            "name": "3scale-operator.v0.11.11",
-            "skipRange": ">=0.10.0 <0.11.11"
-        }
-    ]
-}
-
-…
-필요한 버전의 패키지 이름 정보를 얻어서 entry 변수로 사용한다. skipRange 는 업그레이드시 필요하므로 마찬가지로 변수에 추가한다.
-
-이제 entry 이름으로 검색하며 아래로 내려가면,
-
-{
-    "schema": "olm.bundle",
-    "name": "3scale-operator.v0.11.11",
-    "package": "3scale-operator",
-    "image": "registry.redhat.io/3scale-amp2/3scale-rhel7-operator-metadata@sha256:d8e94620237da97e1b65dac4fb616d21d13e2fea08c9385145a02ad3fbd59d88",
-...
-부분이 나온다. 여기에서 bundle 이미지 정보를 가져온다.
+> catalog.json 파일을 열면 맨 윗 부분에,
+> {
+>     "schema": "olm.package",
+>     "name": "3scale-operator",
+>     "defaultChannel": "threescale-2.14",
+> …
+> 부분이 있다. 여기에서 올바른 operator 이름과 defaultChannel 정보를 가져온다. channel 은 버전에 따라 다른 채널을 사용할 수도 있다.
+> 아래로 조금 더 스크롤해서 channel 정보로 내려온다.
+> {
+>     "schema": "olm.channel",
+>     "name": "threescale-2.14",
+>     "package": "3scale-operator",
+>     "entries": [
+>         {
+>             "name": "3scale-operator.v0.11.11",
+>             "skipRange": ">=0.10.0 <0.11.11"
+>         }
+>     ]
+> }
+> 
+> …
+> 필요한 버전의 패키지 이름 정보를 얻어서 entry 변수로 사용한다. skipRange 는 업그레이드시 필요하므로 마찬가지로 변수에 추가한다.
+> 이제 entry 이름으로 검색하며 아래로 내려가면,
+> 
+> {
+>     "schema": "olm.bundle",
+>     "name": "3scale-operator.v0.11.11",
+>     "package": "3scale-operator",
+>     "image": "registry.redhat.io/3scale-amp2/3scale-rhel7-operator-metadata@sha256:d8e94620237da97e1b65dac4fb616d21d13e2fea08c9385145a02ad3fbd59d88",
+> ...
+> 부분이 나온다. 여기에서 bundle 이미지 정보를 가져온다.
 
 
 
-index.yaml 파일 유효성 검사
-
+3. index.yaml 파일 유효성 검사
+```
 # opm validate 3scale-operator
 # echo $?
+```
 
 
-
-operator index 이미지 빌드
-
+4. operator index 이미지 빌드
+```
 # podman build . -f 3scale-operator.Dockerfile -t ecrdev.clouz.io/olm/threescaleoperator-v2.14:v4.12
+```
 
 
-
-operator index 이미지 푸시
-
+5. operator index 이미지 푸시
+```
 # podman push ecrdev.clouz.io/olm/threescaleoperator-v2.14:v4.12
+```
 
 
-
-operator index 이미지에서 manifests / image 정보를 추출
-
+6. operator index 이미지에서 manifests / image 정보를 추출
+```
 # oc adm catalog mirror ecrdev.clouz.io/olm/threescaleoperator-v2.14:v4.12 \
  ecrdev.clouz.io/olm \
  -a /root/pull-secret.json \
  --insecure \
  --index-filter-by-os="linux/amd64" \
  --manifests-only
+```
 
-
-
+7. 
 작업 폴더로 이동
-
+```
 # cd manifests-threescaleoperator-v2.14-xxxxx
+```
 
 
-
-mapping.txt 파일에서 필요한 image mapping 정보를 우리가 사용하는 구조로 수정하여 mapping-final.txt 파일 생성
-
+8. mapping.txt 파일에서 필요한 image mapping 정보를 우리가 사용하는 구조로 수정하여 mapping-final.txt 파일 생성
+```
 # for LINE in $(cat mapping.txt |grep -v "ecrdev.clouz.io/olm/${IMAGE}")
 do
 arrPART1=(${LINE//=/ })
@@ -147,38 +142,37 @@ arrPART1=(${LINE//=/ })
 arrPART3=(${LINE//:/ })
   echo "${arrPART1[0]}=ecrdev.clouz.io/${arrPART2[0]}:${arrPART3[2]}"
 done > mapping-final.txt
+```
 
 
-
-mapping-final.txt 파일을 이용하여 필요한 이미지를 ecr 로 푸시
-
+9. mapping-final.txt 파일을 이용하여 필요한 이미지를 ecr 로 푸시
+```
 # for IMAGE in $(cat mapping-final.txt)
 do
 oc image mirror -a /root/pull-secret.json --insecure \
  --filter-by-os=.\* \
  ${IMAGE}
 done
+```
 
 
-
-catalogSource.yaml 수정
-
+10. catalogSource.yaml 수정
+```
 # sed "s/test-3scaleoperator/3scaleoperator/" catalogSource.yaml > catalogSource-final.yaml
-
-생성된 catalogSource.yaml의 image가 <namespace>-<image name>으로 되어있기 때문에  수정해야 합니다.
-
-catalogsource name이 image name를 참조하기 때문에, image name이 숫자로 시작한다면 catalogsource 생성이 불가능합니다. 필요 시 변경합니다.
-
+```
+> 생성된 catalogSource.yaml의 image가 <namespace>-<image name>으로 되어있기 때문에  수정해야 합니다.
+> catalogsource name이 image name를 참조하기 때문에, image name이 숫자로 시작한다면 catalogsource 생성이 불가능합니다. 필요 시 변경합니다.
 
 
-catalogsource 적용
 
+11. catalogsource 적용
+```
 # oc create -f ./catalogSource-final.yaml
+```
 
 
-
-설치된 오퍼레이터의 Subscription의 source를 새로 추가한 catalogsource 명으로 변경
-
+12. 설치된 오퍼레이터의 Subscription의 source를 새로 추가한 catalogsource 명으로 변경
+```
 # oc get catalogsource -n openshift-marketplace
 # oc get csv -n 3scale
 # oc get subscriptions.operators.coreos.com -n 3scale
@@ -201,6 +195,10 @@ spec:
   source: threescaleoperator-v2.14
   sourceNamespace: openshift-marketplace
   startingCSV: 3scale-operator.v0.11.11
+```
+> source: redhat-threescale-v213-operator -> threescaleoperator-v2.14 (새로운catalogsource) 로 변경
 
-source: redhat-threescale-v213-operator -> threescaleoperator-v2.14 (새로운catalogsource) 로 변경
-
+13. 오퍼레이터 정상 업그레이드 확인
+```
+# watch oc get pods -n apim211
+```
