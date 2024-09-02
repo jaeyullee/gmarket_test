@@ -1,3 +1,11 @@
+# 목차
+
+[1. 주의 사항](#주의-사항)
+[2. 3scale Operator Upgrade Guide](#3scale-operator-upgrade-guide)
+[3. APIcast Operator Upgrade Guide](#apicast-operator-upgrade-guide)
+
+
+
 # 주의 사항
 
 Operator Mirror를 생성하는 과정에서 package명을 기존과 동일하게 해야만 해당 작업이 유효합니다.
@@ -11,28 +19,17 @@ catalogsource 명이 image명을 참조하여 생성되기 때문에, image 명�
 
 
 
-# 작업 과정
+# 3scale Operator Upgrade Guide
 
 
+0. 준비물
 
-준비물
-
-opm cli 다운로드 (https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable-4.12/)
-
+> opm cli 다운로드 (https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable-4.12/)
 
 
-1. oc adm catalog mirror 명령으로 catalog.json 파일 추출
+1. 3scale Operator 미러링 과정에서 생성된 apicast catalog.json 확인
 ```
-# oc adm catalog mirror \
-   registry.redhat.io/redhat/redhat-operator-index:v4.12 \
-   registry.test.cluster/olm \
-   -a /root/pull-secret.json \
-   --insecure \
-   --index-filter-by-os="linux/amd64" \
-   --manifests-only
-
-끝까지 기다리지 말고, wrote declarative configs to /tmp/xxxxxx 로그가 보이면 ctrl-C 눌러서 중단하고
-/tmp/xxxxxx/3scale-operator/catalog.json 폴더 확인
+# vi /tmp/xxxxxx/3scale-operator/catalog.json
 ```
 
 2. 미러 생성 스크립트 작성
@@ -135,7 +132,7 @@ EOF
 
 8. mapping.txt 파일에서 필요한 image mapping 정보를 우리가 사용하는 구조로 수정하여 mapping-final.txt 파일 생성
 ```
-# for LINE in $(cat mapping.txt |grep -v "ecrdev.clouz.io/olm/${IMAGE}")
+# for LINE in $(cat mapping.txt |grep -v "ecrdev.clouz.io/olm/threescaleoperator-v2.14:v4.12")
 do
 arrPART1=(${LINE//=/ })
   arrPART2=(${LINE//@/ })
@@ -198,6 +195,153 @@ spec:
   startingCSV: 3scale-operator.v0.11.11
 ```
 > source: redhat-threescale-v213-operator -> threescaleoperator-v2.14 (새로운catalogsource) 로 변경
+
+13. 오퍼레이터 정상 업그레이드 확인
+```
+# watch oc get pods -n apim211
+```
+
+
+
+# APIcast Operator Upgrade Guide
+
+
+1. oc adm catalog mirror 명령으로 catalog.json 파일 추출
+```
+# oc adm catalog mirror \
+   registry.redhat.io/redhat/redhat-operator-index:v4.12 \
+   registry.test.cluster/olm \
+   -a /root/pull-secret.json \
+   --insecure \
+   --index-filter-by-os="linux/amd64" \
+   --manifests-only
+```
+> 끝까지 기다리지 말고, wrote declarative configs to /tmp/xxxxxx 로그가 보이면 ctrl-C 눌러서 중단하고  
+> /tmp/xxxxxx/3scale-operator/catalog.json 폴더 확인
+
+
+2. 미러 생성 스크립트 작성
+```
+# vi apicast-2.14-operator-mirror.sh
+
+#!/bin/bash
+OPERATOR=apicast-operator
+defaultChannel=threescale-2.14
+ENTRY=apicast-operator.v0.8.1
+SKIPRANGE=">=0.6.2 <0.8.1"
+BUNDLE=registry.redhat.io/3scale-amp2/apicast-rhel7-operator-metadata@sha256:bcc5ed9560667c7347f3044c7fa6148e3867c17e93e83595a62794339a5a6b0d
+
+mkdir ${OPERATOR}
+opm generate dockerfile ${OPERATOR} \
+ -i registry.redhat.io/openshift4/ose-operator-registry:v4.12
+opm init ${OPERATOR} --default-channel=${defaultChannel} \
+ --output yaml > ${OPERATOR}/index.yaml
+opm render ${BUNDLE} --output yaml >> ${OPERATOR}/index.yaml
+
+cat << EOF >> ${OPERATOR}/index.yaml
+---
+schema: olm.channel
+package: ${OPERATOR}
+name: ${defaultChannel}
+entries:
+
+- name: ${ENTRY}
+  skipRange: "${SKIPRANGE}"
+EOF
+```
+
+
+3. index.yaml 파일 유효성 검사
+```
+# opm validate apicast-operator
+# echo $?
+```
+
+
+4. operator index 이미지 빌드
+```
+# podman build . -f apicast-operator.Dockerfile -t ecrdev.clouz.io/olm/apicastoperator-v2.14:v4.12
+```
+
+
+5. operator index 이미지 푸시
+```
+# podman push ecrdev.clouz.io/olm/apicastoperator-v2.14:v4.12
+```
+
+
+6. operator index 이미지에서 manifests / image 정보를 추출
+```
+# oc adm catalog mirror ecrdev.clouz.io/olm/apicastoperator-v2.14:v4.12 \
+ ecrdev.clouz.io/olm \
+ -a /root/pull-secret.json \
+ --insecure \
+ --index-filter-by-os="linux/amd64" \
+ --manifests-only
+```
+
+7. 작업 폴더로 이동
+```
+# cd manifests-apicastoperator-v2.14-xxxxx
+```
+
+
+8. mapping.txt 파일에서 필요한 image mapping 정보를 우리가 사용하는 구조로 수정하여 mapping-final.txt 파일 생성
+```
+# for LINE in $(cat mapping.txt |grep -v "ecrdev.clouz.io/olm/apicastoperator-v2.14:v4.12")
+do
+arrPART1=(${LINE//=/ })
+  arrPART2=(${LINE//@/ })
+arrPART3=(${LINE//:/ })
+  echo "${arrPART1[0]}=ecrdev.clouz.io/${arrPART2[0]}:${arrPART3[2]}"
+done > mapping-final.txt
+```
+
+
+9. mapping-final.txt 파일을 이용하여 필요한 이미지를 ecr 로 푸시
+```
+# for IMAGE in $(cat mapping-final.txt)
+do
+oc image mirror -a /root/pull-secret.json --insecure \
+ --filter-by-os=.\* \
+ ${IMAGE}
+done
+```
+
+
+10. catalogSource.yaml 수정
+```
+# sed "s/test-3scaleoperator/3scaleoperator/" catalogSource.yaml > catalogSource-final.yaml
+```
+> 생성된 catalogSource.yaml의 image가 <namespace>-<imagename>으로 되어있기 때문에 수정해야 한다.  
+> catalogsource name이 image name를 참조하기 때문에, image name 첫글자가 숫자면 catalogsource 생성이 불가능하다.  
+> 필요 시 변경한다.
+
+
+
+11. catalogsource 적용
+```
+# oc create -f ./catalogSource-final.yaml
+```
+
+
+12. 설치된 오퍼레이터의 Subscription의 source를 새로 추가한 catalogsource 명으로 변경
+```
+# oc get catalogsource -n openshift-marketplace
+# oc get csv -n 3scale
+# oc get subscriptions.operators.coreos.com -n 3scale
+# oc edit subscriptions.operators.coreos.com 3scale-operator -n 3scale
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: 3scale-operator
+...
+spec:
+...
+  source: threescaleoperator-v2.14
+...
+```
+> source: apicastoperator-v2.13 -> apicastoperator-v2.14 (새로운catalogsource) 로 변경
 
 13. 오퍼레이터 정상 업그레이드 확인
 ```
