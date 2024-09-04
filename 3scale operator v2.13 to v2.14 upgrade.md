@@ -23,14 +23,22 @@ catalogsource 명이 image명을 참조하여 생성되기 때문에, image 명�
 
 
 0. 준비물
-
 > opm cli 다운로드 (https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable-4.12/)
 
 
-1. 3scale Operator 미러링 과정에서 생성된 apicast catalog.json 확인
+1. oc adm catalog mirror 명령으로 catalog.json 파일 추출
 ```
+# oc adm catalog mirror \
+   registry.redhat.io/redhat/redhat-operator-index:v4.12 \
+   registry.test.cluster/olm \
+   -a /root/pull-secret.json \
+   --insecure \
+   --index-filter-by-os="linux/amd64" \
+   --manifests-only
 # vi /tmp/xxxxxx/3scale-operator/catalog.json
 ```
+> 끝까지 기다리지 말고, wrote declarative configs to /tmp/xxxxxx 로그가 보이면 ctrl-C 눌러서 중단 후 확인
+
 
 2. 미러 생성 스크립트 작성
 ```
@@ -205,19 +213,10 @@ spec:
 
 # APIcast Operator Upgrade Guide
 
-
-1. oc adm catalog mirror 명령으로 catalog.json 파일 추출
+1. 3scale Operator 미러링 과정에서 생성된 apicast catalog.json 확인
 ```
-# oc adm catalog mirror \
-   registry.redhat.io/redhat/redhat-operator-index:v4.12 \
-   registry.test.cluster/olm \
-   -a /root/pull-secret.json \
-   --insecure \
-   --index-filter-by-os="linux/amd64" \
-   --manifests-only
+# vi /tmp/xxxxxx/apicast-operator/catalog.json
 ```
-> 끝까지 기다리지 말고, wrote declarative configs to /tmp/xxxxxx 로그가 보이면 ctrl-C 눌러서 중단하고  
-> /tmp/xxxxxx/3scale-operator/catalog.json 폴더 확인
 
 
 2. 미러 생성 스크립트 작성
